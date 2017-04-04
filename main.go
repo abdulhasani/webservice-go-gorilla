@@ -1,0 +1,32 @@
+package main
+
+import (
+	"net/http"
+
+	"log"
+
+	"fmt"
+
+	"github.com/gorilla/mux"
+)
+
+func testRouter() {
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/hello/{name}", index).Methods("GET")
+	log.Fatal(http.ListenAndServe(":8080", router))
+}
+
+func index(w http.ResponseWriter, r *http.Request) {
+	log.Println("Responsing to /hello request")
+	log.Println(r.UserAgent())
+
+	vars := mux.Vars(r)
+	name := vars["name"]
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "Hello:", name)
+}
+
+func main() {
+	testRouter()
+}
